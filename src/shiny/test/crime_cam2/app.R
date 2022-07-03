@@ -56,8 +56,18 @@ server <- function(input, output) {
                              fillOpacity = .05,
                              group = "crime")
     
-    
+    # locate cctv
     crime_cam <- addMarkers(crime_cam, lng = -76.68489829, lat = 39.33866714, group = "cime")
+    
+    
+    # mark off area (square) of interest
+    crime_cam <- addMarkers(crime_cam, lng = -76.694313, lat = 39.345848, group = "cime")
+    crime_cam <- addMarkers(crime_cam, lng = -76.675429, lat = 39.345848, group = "cime")
+    crime_cam <- addMarkers(crime_cam, lng = -76.694313, lat = 39.331448, group = "cime")
+    crime_cam <- addMarkers(crime_cam, lng = -76.675429, lat = 39.331448, group = "cime")
+    
+    
+    
     
     crime_cam <- addLayersControl(crime_cam, overlayGroups = "crime", options = layersControlOptions(collapsed = FALSE))
     

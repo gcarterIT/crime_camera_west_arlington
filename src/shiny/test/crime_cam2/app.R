@@ -61,15 +61,19 @@ server <- function(input, output) {
     
     
     # mark off area (square) of interest
-    crime_cam <- addMarkers(crime_cam, lng = -76.694313, lat = 39.345848, group = "cime")
-    crime_cam <- addMarkers(crime_cam, lng = -76.675429, lat = 39.345848, group = "cime")
-    crime_cam <- addMarkers(crime_cam, lng = -76.694313, lat = 39.331448, group = "cime")
-    crime_cam <- addMarkers(crime_cam, lng = -76.675429, lat = 39.331448, group = "cime")
+    crime_cam <- addMarkers(crime_cam, lng = -76.694313, lat = 39.345848, group = "cime2")
+    crime_cam <- addMarkers(crime_cam, lng = -76.675429, lat = 39.345848, group = "cime2")
+    crime_cam <- addMarkers(crime_cam, lng = -76.694313, lat = 39.331448, group = "cime2")
+    crime_cam <- addMarkers(crime_cam, lng = -76.675429, lat = 39.331448, group = "cime2")
     
     
     
     
-    crime_cam <- addLayersControl(crime_cam, overlayGroups = "crime", options = layersControlOptions(collapsed = FALSE))
+  #  crime_cam <- addLayersControl(crime_cam, overlayGroups = "crime", options = layersControlOptions(collapsed = FALSE))
+    
+  #  crime_cam <- addLayersControl(crime_cam, overlayGroups = "cime2", options = layersControlOptions(collapsed = FALSE))
+    
+    crime_cam <- addLayersControl(crime_cam, overlayGroups = c("cime2","crime"), options = layersControlOptions(collapsed = FALSE))
     
     
   })

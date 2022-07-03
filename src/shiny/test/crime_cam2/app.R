@@ -3,7 +3,30 @@
 # add packages
 library(shiny)
 library(leaflet)
+library(DBI)        # connects to a DBMS
+library(odbc)       # provides interface to ODBC drivers
+library(config)     # manages environment specific config values
 
+con <- dbConnect(
+  odbc(),
+  Driver   = config::get("crime_camera")$driver,
+  Server   = config::get("crime_camera")$server,
+  UID      = config::get("crime_camera")$uid,
+  PWD      = config::get("crime_camera")$pwd,
+  Port     = config::get("crime_camera")$port,
+  Database = config::get("crime_camera")$database
+)
+
+
+# test connection
+# limit this to 
+#   the west arlington area
+#   only the necessary columns    
+crime_locations <- DBI::dbGetQuery(con, 'SELECT top 10 
+                        Latitude,
+                        Longitude
+                      FROM 
+                        dbo.crime_1mile_square')
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(

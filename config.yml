@@ -1,0 +1,9 @@
+default:
+  crime_camera:
+    driver: 'SQL Server' 
+    server: 'DESKTOP-4PC1LOK\SQLEXPRESS'
+    uid: 'publicaccess'
+    pwd: 'password'
+    port: 1433
+    database: 'crime_camera_west_arlington'
+ 

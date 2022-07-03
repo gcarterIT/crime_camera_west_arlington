@@ -11,6 +11,10 @@ library(here)     # ease referencing of project work files
 library(skimr)
 
 
+
+
+
+
 ## Connect to Database(s)
 # Credit: https://predictivehacks.com/how-to-connect-r-with-sql/
 # establish db connection
@@ -31,14 +35,14 @@ con <- dbConnect(
 # limit this to 
 #   the west arlington area
 #   only the necessary columns    
-crime_locations <- DBI::dbGetQuery(con, 'SELECT top 10 
+crime_locations <- DBI::dbGetQuery(con, 'SELECT
                         Latitude,
                         Longitude
                       FROM 
-                        dbo.crime_data_draft1')
+                        dbo.crime_1mile_square')
 
 
-head(crime_locations)
+head(crime_locations, 50)
 
 
 skim(crime_locations)

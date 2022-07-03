@@ -1,0 +1,312 @@
+- camera location: 39.33866714, -76.68489829
+-- https://earth.google.com/web/search/39.33866714,+-76.68489829/@39.3386671,-76.6848983,133.58348581a,794.94621867d,35y,0h,45t,0r/data=Cl0aMxItGZZdi3FZq0NAIYHlrV_VK1PAKhkzOS4zMzg2NjcxNCwgLTc2LjY4NDg5ODI5GAIgASImCiQJ4IESV-4cU8ARtKX1OWs5U8AZ5uvgP5r3Q0Ahxymv0-NRQ0AoAg
+
+
+- setup
+-- capture all crime data
+-- remove duplicates
+-- remove recs lacking lat/lng, either or both
+-- extract area that encompasses .5 x .5 mile
+-- extract area that encompasses 1 x 1 mile
+-- .5 mile = 2640'
+-- One degree of latitude equals approximately 364,000 feet (69 miles)
+-- calculate longitude: https://gis.stackexchange.com/questions/142326/calculating-longitude-length-in-miles
+--                    : https://gis.stackexchange.com/questions/251643/approx-distance-between-any-2-longitudes-at-a-given-latitude
+--               check: https://www.nhc.noaa.gov/gccalc.shtml
+-- https://gis.stackexchange.com/questions/15545/calculating-coordinates-of-square-x-miles-from-center-point
+-- in map shade area that includes west arlington
+
+
+- algorithms
+-- given a lat/long as the center point
+--- determine a radius from the center (location of camera)
+--- determine all the points lat/long points on the circumference
+--- https://study.com/skill/learn/determining-if-a-point-lies-inside-outside-or-on-a-circle-given-the-center-point-a-radius-explanation.html
+--- https://www.geeksforgeeks.org/find-if-a-point-lies-inside-or-on-circle/
+--- https://gis.stackexchange.com/questions/5821/calculating-latitude-longitude-x-miles-from-point
+--- https://stackoverflow.com/questions/51824391/r-calculating-distance-in-miles-from-one-point-to-another
+--- for checking lat/lng calcs: https://www.omnicalculator.com/other/latitude-longitude-distance
+--- for checking lat/lng calcs: http://www.movable-type.co.uk/scripts/latlong.html
+--- be able to determine any point inside/outside circumference
+-- given a ploygon that encloses west arlington
+--- determine a radius from the center
+--- determine all the points lat/long points on the perimeter
+--- be able to determine any point inside/outside perimeter
+
+
+- read previous crime and camera studies
+-- cherry hill study
+-- medium article
+- determine location of cameras
+-- within west arlington
+- determine various perimeters around camera
+- determine crime points within those perimeters
+-- over various periods of time
+-- over timeline of installed cameras in neighborhood
+
+
+- get photos
+-- camera and its surrounding location
+-- photos of high crime/arrests spots 
+--- stores
+--- playgrounds
+--- allies
+--- street corners
+
+
+- graphics
+-- crime type icons
+-- hot spots icons
+
+- variables
+-- type of crime
+-- date
+-- day
+-- week
+-- holiday
+-- time
+-- age of perp
+-- season
+-- weather
+
+
+------------------------------------------------------------------------
+
+crime codes
+-----------
+https://data.baltimorecity.gov/documents/crime-codes/about
+
+This document contains data dictionary of crime codes
+This document contains data dictionary of crime codes for  part1 crime data
+
+============================================================================================================
+
+Part 1 Crime Data
+-----------------
+This dataset represents the location and characteristics of major (Part 1) crime against persons such as homicide, shooting, robbery, aggravated assault etc. within the City of Baltimore.
+
+Part_1_Crime_Data_.csv
+
+https://data.baltimorecity.gov/datasets/baltimore::part-1-crime-data-/explore?location=-9.905513%2C61.547439%2C0.70
+
+during import into database:
+
+===================================
+
+Error inserting data into table. (Microsoft.SqlServer.Import.Wizard)
+
+------------------------------
+Program Location:
+
+   at Microsoft.SqlServer.Import.Wizard.InsertData.ResultCheck(Result result)
+   at Microsoft.SqlServer.Import.Wizard.InsertData.DoWork()
+   at Microsoft.SqlServer.Management.TaskForms.SimpleWorkItem.Run()
+
+===================================
+
+Error inserting data into table. (Microsoft.SqlServer.Prose.Import.SDS)
+
+------------------------------
+Program Location:
+
+   at Microsoft.SqlServer.Prose.Import.BcpTextSynthesis.InsertIntoDB(String inputFilePath, String tableName, String schemaName, IReadOnlyList`1 columnInfo, SqlConnection connection, Int32 batchSize, SqlTransaction transaction, IList`1 allFinalTransformations, IList`1 allFinalTransformationColumns, IList`1 allFinalColNames)
+   at Microsoft.SqlServer.Prose.Import.BcpProcess.CreateTableAndInsertDataIntoDb(String connectionString, Int32 batchSize, String azureAccessToken)
+
+===================================
+
+The given value of type String from the data source cannot be converted to type tinyint of the specified target column. (System.Data)
+
+------------------------------
+Program Location:
+
+   at System.Data.SqlClient.SqlBulkCopy.ConvertValue(Object value, _SqlMetaData metadata, Boolean isNull, Boolean& isSqlType, Boolean& coercedToDataFeed)
+   at System.Data.SqlClient.SqlBulkCopy.ReadWriteColumnValueAsync(Int32 col)
+   at System.Data.SqlClient.SqlBulkCopy.CopyColumnsAsync(Int32 col, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.CopyRowsAsync(Int32 rowsSoFar, Int32 totalRows, CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.CopyBatchesAsyncContinued(BulkCopySimpleResultSet internalResults, String updateBulkCommandText, CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.CopyBatchesAsync(BulkCopySimpleResultSet internalResults, String updateBulkCommandText, CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.WriteToServerInternalRestContinuedAsync(BulkCopySimpleResultSet internalResults, CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.WriteToServerInternalRestAsync(CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.WriteToServerInternalAsync(CancellationToken ctoken)
+   at System.Data.SqlClient.SqlBulkCopy.WriteRowSourceToServerAsync(Int32 columnCount, CancellationToken ctoken)
+   at System.Data.SqlClient.SqlBulkCopy.WriteToServer(IDataReader reader)
+   at Microsoft.SqlServer.Prose.Import.BcpTextSynthesis.InsertIntoDB(String inputFilePath, String tableName, String schemaName, IReadOnlyList`1 columnInfo, SqlConnection connection, Int32 batchSize, SqlTransaction transaction, IList`1 allFinalTransformations, IList`1 allFinalTransformationColumns, IList`1 allFinalColNames)
+
+===================================
+
+Failed to convert parameter value from a String to a Byte. (System.Data)
+
+------------------------------
+Program Location:
+
+   at System.Data.SqlClient.SqlParameter.CoerceValue(Object value, MetaType destinationType, Boolean& coercedToDataFeed, Boolean& typeChanged, Boolean allowStreaming)
+   at System.Data.SqlClient.SqlBulkCopy.ConvertValue(Object value, _SqlMetaData metadata, Boolean isNull, Boolean& isSqlType, Boolean& coercedToDataFeed)
+
+===================================
+
+Value was either too large or too small for an unsigned byte. (mscorlib)
+
+------------------------------
+Program Location:
+
+   at System.Byte.Parse(String s, NumberStyles style, NumberFormatInfo info)
+   at System.String.System.IConvertible.ToByte(IFormatProvider provider)
+   at System.Convert.ChangeType(Object value, Type conversionType, IFormatProvider provider)
+   at System.Data.SqlClient.SqlParameter.CoerceValue(Object value, MetaType destinationType, Boolean& coercedToDataFeed, Boolean& typeChanged, Boolean allowStreaming)
+
+
+
+
+
+
+Shapefile
+Part_1_Crime_Data_.zip
+
+=============================================================================================================
+
+CCTV Locations Crime Cameras
+----------------------------
+https://data.baltimorecity.gov/datasets/baltimore::cctv-locations-crime-cameras/explore?location=39.368511%2C-76.427823%2C9.97
+
+This dataset represents closed circuit camera locations capturing activity within 256ft (~2 blocks).
+
+CCTV_Locations_Crime_Cameras.csv
+
+during import into database:
+
+TITLE: Microsoft SQL Server Management Studio
+------------------------------
+
+Up to 12 cells of data may have been dropped during insert from the following columns:
+XCOORD
+YCOORD 
+
+------------------------------
+
+These are the records with missing XCOORDs and YCOORDs:
+
+-8528833.562	4764896.459	390	2605	 	N Charles St and Eager St	Midtown Fixed	0	0	EGISDATA	2021/10/29 13:59:48+00	EGISDATA	2021/10/29 13:59:48+00
+-8528833.562	4764896.459	391	2605	 	N Charles St and Eager St	Midtown Fixed	0	0	EGISDATA	2021/10/29 13:59:48+00	EGISDATA	2021/10/29 13:59:48+00
+-8528833.562	4764896.459	392	2605	 	N Charles St and Eager St	Midtown Fixed	0	0	EGISDATA	2021/10/29 13:59:48+00	EGISDATA	2021/10/29 13:59:48+00
+-8528833.562	4764896.459	393	2605	 	N Charles St and Eager St	Midtown Fixed	0	0	EGISDATA	2021/10/29 13:59:48+00	EGISDATA	2021/10/29 13:59:48+00
+-8528859.263	4765397.647	396	2608	 	N Charles St and Preston St	Midtown Fixed	0	0	EGISDATA	2021/10/29 13:59:48+00	EGISDATA	2021/10/29 13:59:48+00
+-8528859.263	4765397.647	397	2608	 	N Charles St and Preston St	Midtown Fixed	0	0	EGISDATA	2021/10/29 13:59:48+00	EGISDATA	2021/10/29 13:59:48+00
+
+BUTTONS:
+
+OK
+------------------------------
+
+====================================================================================
+
+arrests
+-------
+https://data.baltimorecity.gov/datasets/arrests/explore
+
+This dataset represents arrest in the City of Baltimore Data updated as of October 22, 2021 at 11:15:41
+
+Arrests.csv
+
+
+===================================
+
+TITLE: Microsoft SQL Server Management Studio
+------------------------------
+
+Error inserting data into table. (Microsoft.SqlServer.Import.Wizard)
+
+------------------------------
+ADDITIONAL INFORMATION:
+
+Error inserting data into table. (Microsoft.SqlServer.Prose.Import.SDS)
+
+------------------------------
+
+The given value of type String from the data source cannot be converted to type int of the specified target column. (System.Data)
+
+------------------------------
+
+Failed to convert parameter value from a String to a Int32. (System.Data)
+
+------------------------------
+
+Input string was not in a correct format. (mscorlib)
+
+------------------------------
+BUTTONS:
+
+OK
+------------------------------
+
+
+
+===================================
+
+Error inserting data into table. (Microsoft.SqlServer.Import.Wizard)
+
+------------------------------
+Program Location:
+
+   at Microsoft.SqlServer.Import.Wizard.InsertData.ResultCheck(Result result)
+   at Microsoft.SqlServer.Import.Wizard.InsertData.DoWork()
+   at Microsoft.SqlServer.Management.TaskForms.SimpleWorkItem.Run()
+
+===================================
+
+Error inserting data into table. (Microsoft.SqlServer.Prose.Import.SDS)
+
+------------------------------
+Program Location:
+
+   at Microsoft.SqlServer.Prose.Import.BcpTextSynthesis.InsertIntoDB(String inputFilePath, String tableName, String schemaName, IReadOnlyList`1 columnInfo, SqlConnection connection, Int32 batchSize, SqlTransaction transaction, IList`1 allFinalTransformations, IList`1 allFinalTransformationColumns, IList`1 allFinalColNames)
+   at Microsoft.SqlServer.Prose.Import.BcpProcess.CreateTableAndInsertDataIntoDb(String connectionString, Int32 batchSize, String azureAccessToken)
+
+===================================
+
+The given value of type String from the data source cannot be converted to type int of the specified target column. (System.Data)
+
+------------------------------
+Program Location:
+
+   at System.Data.SqlClient.SqlBulkCopy.ConvertValue(Object value, _SqlMetaData metadata, Boolean isNull, Boolean& isSqlType, Boolean& coercedToDataFeed)
+   at System.Data.SqlClient.SqlBulkCopy.ReadWriteColumnValueAsync(Int32 col)
+   at System.Data.SqlClient.SqlBulkCopy.CopyColumnsAsync(Int32 col, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.CopyRowsAsync(Int32 rowsSoFar, Int32 totalRows, CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.CopyBatchesAsyncContinued(BulkCopySimpleResultSet internalResults, String updateBulkCommandText, CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.CopyBatchesAsync(BulkCopySimpleResultSet internalResults, String updateBulkCommandText, CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.WriteToServerInternalRestContinuedAsync(BulkCopySimpleResultSet internalResults, CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.WriteToServerInternalRestAsync(CancellationToken cts, TaskCompletionSource`1 source)
+   at System.Data.SqlClient.SqlBulkCopy.WriteToServerInternalAsync(CancellationToken ctoken)
+   at System.Data.SqlClient.SqlBulkCopy.WriteRowSourceToServerAsync(Int32 columnCount, CancellationToken ctoken)
+   at System.Data.SqlClient.SqlBulkCopy.WriteToServer(IDataReader reader)
+   at Microsoft.SqlServer.Prose.Import.BcpTextSynthesis.InsertIntoDB(String inputFilePath, String tableName, String schemaName, IReadOnlyList`1 columnInfo, SqlConnection connection, Int32 batchSize, SqlTransaction transaction, IList`1 allFinalTransformations, IList`1 allFinalTransformationColumns, IList`1 allFinalColNames)
+
+===================================
+
+Failed to convert parameter value from a String to a Int32. (System.Data)
+
+------------------------------
+Program Location:
+
+   at System.Data.SqlClient.SqlParameter.CoerceValue(Object value, MetaType destinationType, Boolean& coercedToDataFeed, Boolean& typeChanged, Boolean allowStreaming)
+   at System.Data.SqlClient.SqlBulkCopy.ConvertValue(Object value, _SqlMetaData metadata, Boolean isNull, Boolean& isSqlType, Boolean& coercedToDataFeed)
+
+===================================
+
+Input string was not in a correct format. (mscorlib)
+
+------------------------------
+Program Location:
+
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseInt32(String s, NumberStyles style, NumberFormatInfo info)
+   at System.String.System.IConvertible.ToInt32(IFormatProvider provider)
+   at System.Convert.ChangeType(Object value, Type conversionType, IFormatProvider provider)
+   at System.Data.SqlClient.SqlParameter.CoerceValue(Object value, MetaType destinationType, Boolean& coercedToDataFeed, Boolean& typeChanged, Boolean allowStreaming)
+
+SOLUTION: IMPORT DEFAULT INT TO NCHAR(50)
+
+
+misc
+https://www.sunearthtools.com/tools/distance.php
+

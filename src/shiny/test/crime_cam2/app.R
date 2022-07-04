@@ -47,9 +47,16 @@ server <- function(input, output) {
   
   output$crime_cam  <- renderLeaflet({
     
-    crime_cam <- leaflet()
+    crime_cam <- leaflet(data = crime_locations)
     crime_cam <- addTiles(crime_cam)
+    crime_cam <- addMarkers(crime_locations, ~Longitude, ~Latitude)
+    
     crime_cam <- setView(crime_cam, lng = -76.68489829, lat = 39.33866714, zoom = 17)
+    
+    #crime_cam <- setView(data = crime_cam, lng = ~Longitude, lat = ~Latitude, zoom = 17)
+    
+    
+    
     #crime_cam <- addRectangles(crime_cam, lng1 = -2.096, lat1 = 57.176, lng2 = -1.978, lat2 = 57.101, weight = 1, group = "boundary" )
     #crime_cam <- addRectangles(crime_cam, lng1 = -1.795, lat1 = 57.512, lng2 = -1.735, lat2 = 57.472, weight = 1, group = "boundary" )
     #crime_cam <- addLayersControl(crime_cam, overlayGroups = "boundary", options = layersControlOptions(collapsed = FALSE))
@@ -96,7 +103,7 @@ server <- function(input, output) {
     
   #  crime_cam <- addLayersControl(crime_cam, overlayGroups = "cime2", options = layersControlOptions(collapsed = FALSE))
     
-    crime_cam <- addLayersControl(crime_cam, overlayGroups = c("cime2","crime"), options = layersControlOptions(collapsed = FALSE))
+    crime_cam <- addLayersControl(crime_cam, overlayGroups = c("crime"), options = layersControlOptions(collapsed = FALSE))
     
     
   })

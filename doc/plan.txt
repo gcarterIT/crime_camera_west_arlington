@@ -1,4 +1,5 @@
 - camera location: 39.33866714, -76.68489829
+
 -- https://earth.google.com/web/search/39.33866714,+-76.68489829/@39.3386671,-76.6848983,133.58348581a,794.94621867d,35y,0h,45t,0r/data=Cl0aMxItGZZdi3FZq0NAIYHlrV_VK1PAKhkzOS4zMzg2NjcxNCwgLTc2LjY4NDg5ODI5GAIgASImCiQJ4IESV-4cU8ARtKX1OWs5U8AZ5uvgP5r3Q0Ahxymv0-NRQ0AoAg
 
 
@@ -17,6 +18,7 @@
 -- in map shade area that includes west arlington
 
 
+
 - algorithms
 -- given a lat/long as the center point
 --- determine a radius from the center (location of camera)
@@ -32,6 +34,19 @@
 --- determine a radius from the center
 --- determine all the points lat/long points on the perimeter
 --- be able to determine any point inside/outside perimeter
+
+
+- analyis
+- crime within 256 ft range of cctv - before and after installation
+- crime within 256 ft wide range beyond range of cctv - before and after installation
+- crimes beyond256 ft range of cctv - before and after installation
+- consider
+-- type of crime
+-- dates
+-- time of day
+-- day of week
+-- gender, age, race
+-- ethnicity
 
 
 - read previous crime and camera studies

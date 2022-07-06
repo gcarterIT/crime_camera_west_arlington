@@ -10,6 +10,7 @@ library(corrplot)   # create correlation matrix
 library(here)       # ease referencing of project work files
 library(skimr)      # get summary statistics
 library(geosphere)  # perform geo math
+library(leaflet)    # interactive maps
 
 
 
@@ -36,10 +37,11 @@ con <- dbConnect(
 #   the west arlington area
 #   only the necessary columns    
 crime_locations <- DBI::dbGetQuery(con, 'SELECT
+                        RowID,
                         Latitude,
                         Longitude
                       FROM 
-                        dbo.crime_1mile_square')
+                        dbo.crime_1mile_square2')
 
 
 head(crime_locations, 50)
@@ -58,6 +60,26 @@ x$dist_from_ctr_meters <- geosphere::distHaversine(
 
 head(x,5)
 
+## \/\/\/\/\/\/\/\/ debug start
+
+z <- geosphere::distHaversine(
+  p1 = c(-76.6837, 39.3397),
+  p2 = c(-76.68489829, 39.33866714)  )
+
+z
+# 154.4774 meters
+
+w <- z / 1609.34 # miles
+w
+# [1] 0.09598803 miles
+
+
+a <- w * 5280
+a
+# [1] 506.8168 feet
+
+
+## /\/\/\/\/\/\/\/\ debug end
 
 # meters to miles
 x$dist_from_ctr_miles = x$dist_from_ctr_meters / 1609.34
@@ -126,18 +148,22 @@ nrow(crimes_inside_extd_range)
               ~Latitude, 
               #popup = ~as.character(Latitude + Longitude),
               
-              popup = paste("Lat", y$Latitude, "<br>",
+              popup = paste("RowID", y$RowID, "<br>", 
+                            "Lat", y$Latitude, "<br>",
                             "Lng", y$Longitude),
               label = ~as.character(Latitude)) %>%
    addMarkers(-76.68489829, lat = 39.33866714) %>%
    addCircles(              lng = -76.68489829, 
                             lat = 39.33866714, 
                             weight = 1,
+                            # radius = 256 ft * .3048 meters/foot                            
                             radius = 78.0288, group = "crime") %>%
    addCircles(              lng = -76.68489829, 
                             lat = 39.33866714, 
                             weight = 1,
-                            radius = 150, 
+                            # double distance from center
+                            # 78.0288 * 2
+                            radius = 156.0576, 
                             fillColor = "green",
                             fillOpacity = .05,                             
                             group = "crime") %>%
@@ -153,11 +179,14 @@ nrow(crimes_inside_extd_range)
    addCircles(              lng = -76.68489829, 
                             lat = 39.33866714, 
                             weight = 1,
+                            # radius = 256 ft * .3048 meters/foot
                             radius = 78.0288, group = "crime") %>%
    addCircles(              lng = -76.68489829, 
                             lat = 39.33866714, 
                             weight = 1,
-                            radius = 150, 
+                            # double distance from center
+                            # 78.0288 * 2
+                            radius = 156.0576, 
                             fillColor = "green",
                             fillOpacity = .05,                             
                             group = "crime") %>%

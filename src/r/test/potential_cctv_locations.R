@@ -11,7 +11,8 @@ library(here)       # ease referencing of project work files
 library(skimr)      # get summary statistics
 library(geosphere)  # perform geo math
 library(leaflet)    # interactive maps
-library(reader)
+library(reader)     # read/write files
+library(here)       # find working directory
 
 ## Connect to Database(s)
 # Credit: https://predictivehacks.com/how-to-connect-r-with-sql/
@@ -43,57 +44,31 @@ crime_locations <- DBI::dbGetQuery(con, 'SELECT
 
 
 head(crime_locations, 5)
-
 nrow(crime_locations)
 # [1] 39070
 
-# get locations where there were 100 or more crimes during recorded histor/////y
+
+# get locations where there were 100 or more crimes during recorded history
 
 crime_locations_100 <- crime_locations %>%
   group_by(Latitude, Longitude) %>%
   dplyr::summarize(count = n()) %>%
   filter(count >= 100)
 
-head(crime_locations_100, 50)
+crime_locations_100 %>%
+  arrange(count)
+# 19 locations having more than 100 crimes
+#  ranging from 101 to 307 crimes
+# we'll consider these our 'centroids'
 
-w <- crime_locations_100
-
-head(w,5)
-# now find how many crime locations are within a 256' distance from each of these points
-
-
-
-# for each crime, calculate its distance from the cctv
-# result will be in meters
-crime_locations$dist_from_ctr_meters <- geosphere::distHaversine(
-  p1 = crime_locations[ , c("Longitude", "Latitude")],
-  p2 = c(-76.7043, 39.3575)  )
-
-
-crime_locations %>%
-  filter(dist_from_ctr_meters)
-
-# find all those inside of cctv range
-crime_locations %>%
-  filter(dist_from_ctr_meters <= 0.0485)
-
-
-
-for(i in 1:nrow(data2)) {       # for-loop over rows
-  data2[i, ] <- data2[i, ] - 100
-}
-
-
-
-
-
-
+# create temp variable to preserve dataframe
 x <- crime_locations
-
 nrow(x)
-
 head(x, 5)
 
+# add columns to save
+#  - point distance from centroid
+#  - coordinates of centroid
 x <- x %>%
   mutate(dist = 0) %>%
   mutate(cent_lat = 0) %>%
@@ -114,7 +89,8 @@ for(i in 1:nrow(x)) {       # for-loop over rows
 #--Latitude	Longitude	(No column name)
 #--39.3575	-76.7043	370
 
-
+# create a dataframe that save save coordinates of
+#   points within a 256' from the centroids
 potential_locations <- data.frame(RowID       = integer(),
                                   Description = character(),
                                   Latitude    = double(),
@@ -171,303 +147,15 @@ for(j in 1:nrow(crime_locations_100)) {
   # nrow(potential_locations)
   # head(potential_locations, 5)
   
-  #write.csv(potential_locations,"C:/Users/gcart/OneDrive/Documents/dev/r/projs/crime_camera_west_arlington/data/test_data/potential_locations.csv","w")
-  
-  
-  #write.csv(potential_locations, "C:/Users/gcart/potential_locations_with_ground_zero.csv")
-  
 }
 
 
+# export to disk
+readr::write_csv(aa,here("data","test_data","potential_locations_with_ground_zero.csv"))
 
+# import from disk
+potential_locations <- readr::read_csv(here("data","test_data","potential_locations_with_ground_zero.csv"))
 
-
-head(temp_table)
-
-
-
-x$dist <- geosphere::distHaversine(
-  p1 = x[ , c("Longitude", "Latitude")],
-  p2 = c(-76.7043, 39.3575)  )
-
-
-head(x)
-
-
-
-
-# \/\/\/\/\/\/\/\/\/ TRASH
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-skim(crime_locations)
-
-x <- crime_locations
-
-
-# for each crime, calculate its distance from the cctv
-# result will be in meters
-x$dist_from_ctr_meters <- geosphere::distHaversine(
-  p1 = x[ , c("Longitude", "Latitude")],
-  p2 = c(-76.68489829, 39.33866714)  )
-
-head(x,5)
 
 ## \/\/\/\/\/\/\/\/ debug start
 

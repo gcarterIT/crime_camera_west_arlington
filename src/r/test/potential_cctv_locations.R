@@ -61,33 +61,6 @@ crime_locations_100 %>%
 #  ranging from 101 to 307 crimes
 # we'll consider these our 'centroids'
 
-# create temp variable to preserve dataframe
-x <- crime_locations
-nrow(x)
-head(x, 5)
-
-# add columns to save
-#  - point distance from centroid
-#  - coordinates of centroid
-x <- x %>%
-  mutate(dist = 0) %>%
-  mutate(cent_lat = 0) %>%
-  mutate(cent_lng = 0 )
-
-head(x, 5)
-
-#--Latitude	Longitude	(No column name)
-#--39.3575	-76.7043	370
-
-
-for(i in 1:nrow(x)) {       # for-loop over rows
-  x[i,c('cent_lat')] <- 39.3575
-  x[i,c('cent_lng')] <- -76.7043
-  x[i,c('dist')] <- 100
-}
-
-#--Latitude	Longitude	(No column name)
-#--39.3575	-76.7043	370
 
 # create a dataframe that save save coordinates of
 #   points within a 256' from the centroids
@@ -99,24 +72,26 @@ potential_locations <- data.frame(RowID       = integer(),
                                   cent_lat    = double(),
                                   cent_lng    = double())
 
-
-
-
+# loop through all the centroids
+#   and find/save points within 256'
+#   of a centroid
 for(j in 1:nrow(crime_locations_100)) {
-
-  # reset temp table
+  # for each centroid make a temp copy of all crime locations
+  #    with add'l columns to save coordinates of THIS centroid
+  #    and the distance of eqch from THIS centroid
   temp_table <- crime_locations
   # add columns
   temp_table <- temp_table %>%
     mutate(dist = 0) %>%
     mutate(cent_lat = 0) %>%
     mutate(cent_lng = 0 )
-  
-  
-  for(i in 1:nrow(temp_table)) {       # for-loop over rows
+
+  # for each rec in the temp table...
+  for(i in 1:nrow(temp_table)) {     
+    # ... save the coordinates of THIS centroid...
     temp_table[i,c('cent_lat')] <- 39.3575
     temp_table[i,c('cent_lng')] <- -76.7043
-  
+    # ... save the distance of this rec's coordinates from the centroid
     temp_table[i,c('dist')] <- geosphere::distHaversine(
       p1 = temp_table[i, c("Longitude", "Latitude")],
       p2 = crime_locations_100[j, c("Longitude", "Latitude")]  )
@@ -131,10 +106,9 @@ for(j in 1:nrow(crime_locations_100)) {
   # remove rows that are outside range and
   # remove those locations = centroid
   
+  # extract all records outside the range of THIS centroid
+  # - include ground zero crimes (crimes lovated at THIS centroid)
   temp_table <- temp_table %>%
-    # exclude ground zero crimes
-    # filter((dist < (256 * .305)) & (dist > 0))
-    # include ground zero crimes
     filter(dist < (256 * .305))
   
   # nrow(temp_table)
@@ -142,16 +116,17 @@ for(j in 1:nrow(crime_locations_100)) {
   
   # head(potential_locations, 5)
   
+  # add these recs to our repository of potential locations
   potential_locations <- rbind(potential_locations, temp_table)
-  
-  # nrow(potential_locations)
-  # head(potential_locations, 5)
   
 }
 
+# nrow(potential_locations)
+# 7/7/22 - 5611
+# head(potential_locations, 5)
 
 # export to disk
-readr::write_csv(aa,here("data","test_data","potential_locations_with_ground_zero.csv"))
+readr::write_csv(potential_locations,here("data","test_data","potential_locations_with_20220707.csv"))
 
 # import from disk
 potential_locations <- readr::read_csv(here("data","test_data","potential_locations_with_ground_zero.csv"))

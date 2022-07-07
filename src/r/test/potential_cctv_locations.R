@@ -114,14 +114,63 @@ for(i in 1:nrow(x)) {       # for-loop over rows
 #--Latitude	Longitude	(No column name)
 #--39.3575	-76.7043	370
 
-for(i in 1:nrow(x)) {       # for-loop over rows
-  x[i,c('cent_lat')] <- 39.3575
-  x[i,c('cent_lng')] <- -76.7043
 
-  x[i,c('dist')] <- geosphere::distHaversine(
-    p1 = x[i, c("Longitude", "Latitude")],
-    p2 = c(-76.7043, 39.3575)  )
+potential_locations <- data.frame(RowID       = integer(),
+                                  Description = character(),
+                                  Latitude    = double(),
+                                  Longitude   = double(),
+                                  dist        = double(),
+                                  cent_lat    = double(),
+                                  cent_lng    = double())
+
+
+
+
+for(i in 1:nrow(crime_locations_100)) {
+
+  # reset temp table
+  temp_table <- crime_locations
+  # add columns
+  temp_table <- temp_table %>%
+    mutate(dist = 0) %>%
+    mutate(cent_lat = 0) %>%
+    mutate(cent_lng = 0 )
+  
+  
+  for(i in 1:nrow(temp_table)) {       # for-loop over rows
+    temp_table[i,c('cent_lat')] <- 39.3575
+    temp_table[i,c('cent_lng')] <- -76.7043
+  
+    temp_table[i,c('dist')] <- geosphere::distHaversine(
+      p1 = temp_table[i, c("Longitude", "Latitude")],
+      p2 = c(-76.7043, 39.3575)  )
+  }
+
+  # nrow(temp_table)
+  # head(temp_table, 5)
+  # 1609.344 meters = 1 mile
+  # .305 meters = 1 foot
+  # 256 ft * .305 meters/foot = 78.08 meters
+  
+  # remove rows that are outside range and
+  # remove those locations = centroid
+  
+  temp_table <- temp_table %>%
+    filter((dist < (256 * .305)) & (dist > 0))
+  
+  # nrow(temp_table)
+  # head(temp_table, 5)
+  
+  # head(potential_locations, 5)
+  
+  potential_locations <- rbind(potential_locations, temp_table)
+  
+  # nrow(potential_locations)
+  # head(potential_locations, 5)
+  
+  
 }
+head(temp_table)
 
 
 

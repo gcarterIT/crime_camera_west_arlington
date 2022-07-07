@@ -11,7 +11,7 @@ library(here)       # ease referencing of project work files
 library(skimr)      # get summary statistics
 library(geosphere)  # perform geo math
 library(leaflet)    # interactive maps
-
+library(reader)
 
 ## Connect to Database(s)
 # Credit: https://predictivehacks.com/how-to-connect-r-with-sql/
@@ -126,7 +126,7 @@ potential_locations <- data.frame(RowID       = integer(),
 
 
 
-for(i in 1:nrow(crime_locations_100)) {
+for(j in 1:nrow(crime_locations_100)) {
 
   # reset temp table
   temp_table <- crime_locations
@@ -143,7 +143,7 @@ for(i in 1:nrow(crime_locations_100)) {
   
     temp_table[i,c('dist')] <- geosphere::distHaversine(
       p1 = temp_table[i, c("Longitude", "Latitude")],
-      p2 = c(-76.7043, 39.3575)  )
+      p2 = crime_locations_100[j, c("Longitude", "Latitude")]  )
   }
 
   # nrow(temp_table)
@@ -156,7 +156,10 @@ for(i in 1:nrow(crime_locations_100)) {
   # remove those locations = centroid
   
   temp_table <- temp_table %>%
-    filter((dist < (256 * .305)) & (dist > 0))
+    # exclude ground zero crimes
+    # filter((dist < (256 * .305)) & (dist > 0))
+    # include ground zero crimes
+    filter(dist < (256 * .305))
   
   # nrow(temp_table)
   # head(temp_table, 5)
@@ -168,8 +171,17 @@ for(i in 1:nrow(crime_locations_100)) {
   # nrow(potential_locations)
   # head(potential_locations, 5)
   
+  #write.csv(potential_locations,"C:/Users/gcart/OneDrive/Documents/dev/r/projs/crime_camera_west_arlington/data/test_data/potential_locations.csv","w")
+  
+  
+  #write.csv(potential_locations, "C:/Users/gcart/potential_locations_with_ground_zero.csv")
   
 }
+
+
+
+
+
 head(temp_table)
 
 

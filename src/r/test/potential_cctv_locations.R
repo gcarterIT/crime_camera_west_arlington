@@ -71,7 +71,11 @@ potential_locations <- data.frame(RowID       = integer(),
                                   dist        = double(),
                                   cent_lat    = double(),
                                   cent_lng    = double())
+# potential_locations
 
+
+# start routine duration timer
+startTime <- Sys.time()
 # loop through all the centroids
 #   and find/save points within 256'
 #   of a centroid
@@ -89,8 +93,8 @@ for(j in 1:nrow(crime_locations_100)) {
   # for each rec in the temp table...
   for(i in 1:nrow(temp_table)) {     
     # ... save the coordinates of THIS centroid...
-    temp_table[i,c('cent_lat')] <- 39.3575
-    temp_table[i,c('cent_lng')] <- -76.7043
+    temp_table[i,c('cent_lat')] <- crime_locations_100[j,c('Latitude')]
+    temp_table[i,c('cent_lng')] <- crime_locations_100[j,c('Longitude')]
     # ... save the distance of this rec's coordinates from the centroid
     temp_table[i,c('dist')] <- geosphere::distHaversine(
       p1 = temp_table[i, c("Longitude", "Latitude")],
@@ -120,16 +124,47 @@ for(j in 1:nrow(crime_locations_100)) {
   potential_locations <- rbind(potential_locations, temp_table)
   
 }
+# end routine duration timer
+endTime <- Sys.time()
+# calculate duration
+# prints recorded time
+print(endTime - startTime)
+# 7/7/22 - Time difference of 1.216862 hours
 
 # nrow(potential_locations)
 # 7/7/22 - 5611
 # head(potential_locations, 5)
 
 # export to disk
-readr::write_csv(potential_locations,here("data","test_data","potential_locations_with_20220707.csv"))
+readr::write_csv(potential_locations,here("data","test_data","potential_locations_with_20220708.csv"))
 
 # import from disk
 potential_locations <- readr::read_csv(here("data","test_data","potential_locations_with_ground_zero.csv"))
+
+# map potenital locations
+leaflet(data = potential_locations) %>%
+  addTiles()  %>% # base map
+  addMarkers(~Longitude, 
+             ~Latitude, 
+             #popup = ~as.character(Latitude + Longitude),
+             
+             popup = paste("RowID", potential_locations$RowID, "<br>", 
+                           "Lat",   potential_locations$Latitude, "<br>",
+                           "Lng",   potential_locations$Longitude),
+             label = ~as.character(Latitude))
+  
+
+# count crimes at centroid locations
+
+potential_locations %>%
+  group_by(cent_lat) %>%
+  dplyr::summarize(count = n())
+
+print(potential_locations$cent_lat)
+
+print(crime_locations_100$Latitude)
+
+
 
 
 ## \/\/\/\/\/\/\/\/ debug start

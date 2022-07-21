@@ -78,6 +78,13 @@
 -- date
 -- day
 -- week
+-- day of week
+-- month
+-- year
+-- weekends
+--- Friday
+--- Saturday
+--- Sunday
 -- holiday
 -- time
 -- age of perp
